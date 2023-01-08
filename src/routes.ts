@@ -1,10 +1,12 @@
 import http from "http";
+import { getReqBody } from "./middleware";
 
 
-export function routeRequest(
+export async function routeRequest(
     request: http.IncomingMessage,
     response: http.ServerResponse
-): void {
+): Promise<void> {
+    let body = await getReqBody(request);
     switch (request.method) {
         case "GET":
             switch (request.url) {
@@ -15,19 +17,19 @@ export function routeRequest(
                     response.end()
             };
             break;
-        
+
         case "POST":
             break;
-        
+
         case "PUT":
             break;
-    
+
         case "DELETE":
             break;
-    
+
         default:
             response.statusCode = 400
             response.write("No Response")
             response.end()
-    }
+    };
 };
