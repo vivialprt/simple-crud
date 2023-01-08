@@ -1,1 +1,12 @@
-console.log('aboba');
+import http from "http";
+import { routeRequest } from "./routes";
+
+
+const PORT = process.env.PORT || 8080;
+
+const server = http.createServer();
+
+server.on("request", routeRequest);
+server.on("error", err => {throw err;});
+
+server.listen(PORT);
