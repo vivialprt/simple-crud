@@ -1,6 +1,10 @@
 import http from "http";
 import { getReqBody } from "./middleware";
+import { createUser } from "./endpoints";
+import { User } from "./user.interface";
 
+
+let storage: User[] = [];
 
 export async function routeRequest(
     request: http.IncomingMessage,
@@ -19,6 +23,17 @@ export async function routeRequest(
             break;
 
         case "POST":
+            try {
+                let id = await createUser(body, storage);
+                response.statusCode = 201;
+                response.write(JSON.stringify({"id": id}));
+                response.end();
+            } catch (err) {
+                response.statusCode = 500;
+                response.write(JSON.stringify({"error": err}));
+                response.end();
+                throw err;
+            }
             break;
 
         case "PUT":
