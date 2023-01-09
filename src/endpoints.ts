@@ -1,5 +1,4 @@
-import { resolveProjectReferencePath } from "typescript";
-import { User } from "./user.interface";
+import { User } from "./user";
 
 export function getAllUsers() {
 
@@ -10,17 +9,11 @@ export function getUser(userId: string) {
 };
 
 export async function createUser(userData: User, storage: User[]): Promise<string> {
-    let id = 'aaabbb';
     return new Promise((resolve, reject) => {
         try {
-            let user = {
-                id: id,
-                username: userData.username,
-                age: userData.age,
-                hobbies: userData.hobbies
-            };
+            let user = new User(userData.username, userData.age, userData.hobbies);
             storage.push(user);
-            resolve(id);
+            resolve(user.id);
         } catch (err) {
             reject(err)
         };

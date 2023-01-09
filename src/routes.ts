@@ -1,7 +1,8 @@
 import http from "http";
 import { getReqBody } from "./middleware";
 import { createUser } from "./endpoints";
-import { User } from "./user.interface";
+import { User } from "./user";
+import { AssertionError } from "assert";
 
 
 let storage: User[] = [];
@@ -29,10 +30,13 @@ export async function routeRequest(
                 response.write(JSON.stringify({"id": id}));
                 response.end();
             } catch (err) {
-                response.statusCode = 500;
-                response.write(JSON.stringify({"error": err}));
-                response.end();
-                throw err;
+                if (err instanceof AssertionError) {
+                    response.statusCode = 400;
+                    response.write(JSON.stringify({"error": err.message}));
+                    response.end();
+                } else {
+                    throw err;
+                };
             }
             break;
 
