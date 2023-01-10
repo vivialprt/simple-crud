@@ -37,7 +37,9 @@ export async function routeRequest(
                         };
                     }
                 } else {  // get all
-                    
+                    response.statusCode = 200;
+                    response.write(JSON.stringify(storage));
+                    response.end();
                 };
             } else {  // invalid url
                 response.statusCode = 400

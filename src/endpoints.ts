@@ -3,10 +3,6 @@ import { validate } from "uuid";
 import assert from "assert";
 
 
-export function getAllUsers() {
-
-};
-
 export async function getUser(userId: string, storage: User[]): Promise<User> {
     assert(validate(userId), "Not a valid UUID");
     return new Promise((resolve, reject) => {
