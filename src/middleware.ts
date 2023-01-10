@@ -11,7 +11,7 @@ export function getReqBody(request: http.IncomingMessage): Promise<any> {
             });
             request.on("end", () => {
                 // send back the data
-                resolve(JSON.parse(body));
+                body.length > 0 ? resolve(JSON.parse(body)) : resolve({});
             });
         } catch (error) {
             reject(error);

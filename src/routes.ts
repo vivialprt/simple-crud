@@ -1,6 +1,9 @@
 import http from "http";
 import { getReqBody } from "./middleware";
-import { createUser } from "./endpoints";
+import {
+    createUser,
+    getUser
+} from "./endpoints";
 import { User } from "./user";
 import { AssertionError } from "assert";
 
@@ -14,12 +17,32 @@ export async function routeRequest(
     let body = await getReqBody(request);
     switch (request.method) {
         case "GET":
-            switch (request.url) {
-            // response for unexpected get requests
-                default:
-                    response.statusCode = 400
-                    response.write(`CANNOT GET ${request.url}`)
-                    response.end()
+            if (request.url?.startsWith('/users/')) {  // valid url
+                let uuid = request.url?.split('/').at(-1) ?? '';
+                if (uuid.length > 0) {  // get by id
+                    try {  // found
+                        let user = await getUser(uuid, storage);
+                        response.statusCode = 200;
+                        response.write(JSON.stringify(user));
+                        response.end();
+                    } catch (err) {
+                        if (err instanceof AssertionError) { // invalid uuid
+                            response.statusCode = 400;
+                            response.write(JSON.stringify({"error": "Invalid UUID"}));
+                            response.end();
+                        } else {  // not found
+                            response.statusCode = 404;
+                            response.write(JSON.stringify({"error": "No such UUID"}));
+                            response.end();
+                        };
+                    }
+                } else {  // get all
+                    
+                };
+            } else {  // invalid url
+                response.statusCode = 400
+                response.write(`Ashibka ${request.url}`)
+                response.end()
             };
             break;
 
@@ -35,7 +58,9 @@ export async function routeRequest(
                     response.write(JSON.stringify({"error": err.message}));
                     response.end();
                 } else {
-                    throw err;
+                    response.statusCode = 500;
+                    response.write(JSON.stringify({"error": "Internal server error"}));
+                    response.end();
                 };
             }
             break;
