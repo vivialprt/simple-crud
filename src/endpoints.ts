@@ -25,8 +25,22 @@ export async function createUser(userData: User, storage: User[]): Promise<strin
     });
 };
 
-export function updateUser() {
+export async function updateUser(userData: User, userId: string, storage: User[]): Promise<User> {
+    return new Promise((resolve, reject) => {
+        assert(validate(userId), "Not a valid UUID");
+        if (userData.id)
+            assert(validate(userData.id), "Not a valid UUID in payload");
 
+        for(let user of storage)
+            if (user.id === userId) {
+                user.id = userData.id ?? user.id;
+                user.username = userData.username ?? user.username;
+                user.age = userData.age ?? user.age;
+                user.hobbies = userData.hobbies ?? user.hobbies;
+                resolve(user);
+            };
+        reject(new Error("Not found"));
+    });
 };
 
 export function deleteUser() {

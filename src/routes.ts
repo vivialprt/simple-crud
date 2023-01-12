@@ -2,7 +2,8 @@ import http from "http";
 import { getReqBody } from "./middleware";
 import {
     createUser,
-    getUser
+    getUser,
+    updateUser
 } from "./endpoints";
 import { User } from "./user";
 import { AssertionError } from "assert";
@@ -21,9 +22,9 @@ export async function routeRequest(
         response.end();
         return;
     }
+    let uuid = request.url?.split('/').at(-1) ?? '';    
     switch (request.method) {
         case "GET":
-            let uuid = request.url?.split('/').at(-1) ?? '';
             if (uuid.length > 0) {  // get by id
                 try {  // found
                     let user = await getUser(uuid, storage);
@@ -68,6 +69,28 @@ export async function routeRequest(
             break;
 
         case "PUT":
+            if (uuid.length > 0) {  
+                try {  // found
+                    let user = await updateUser(body, uuid, storage);
+                    response.statusCode = 200;
+                    response.write(JSON.stringify(user));
+                    response.end();
+                } catch (err) {
+                    if (err instanceof AssertionError) { // invalid uuid
+                        response.statusCode = 400;
+                        response.write(JSON.stringify({"error": "Invalid UUID"}));
+                        response.end();
+                    } else {  // not found
+                        response.statusCode = 404;
+                        response.write(JSON.stringify({"error": "No such UUID"}));
+                        response.end();
+                    };
+                }
+            } else {  // no UUID
+                response.statusCode = 405;
+                response.write(JSON.stringify({"error": "Specify UUID"}));
+                response.end();
+            };
             break;
 
         case "DELETE":
