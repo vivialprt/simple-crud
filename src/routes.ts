@@ -15,36 +15,36 @@ export async function routeRequest(
     response: http.ServerResponse
 ): Promise<void> {
     let body = await getReqBody(request);
+    if (!request.url?.startsWith('/users/')) {
+        response.statusCode = 404;
+        response.write("No such URL");
+        response.end();
+        return;
+    }
     switch (request.method) {
         case "GET":
-            if (request.url?.startsWith('/users/')) {  // valid url
-                let uuid = request.url?.split('/').at(-1) ?? '';
-                if (uuid.length > 0) {  // get by id
-                    try {  // found
-                        let user = await getUser(uuid, storage);
-                        response.statusCode = 200;
-                        response.write(JSON.stringify(user));
-                        response.end();
-                    } catch (err) {
-                        if (err instanceof AssertionError) { // invalid uuid
-                            response.statusCode = 400;
-                            response.write(JSON.stringify({"error": "Invalid UUID"}));
-                            response.end();
-                        } else {  // not found
-                            response.statusCode = 404;
-                            response.write(JSON.stringify({"error": "No such UUID"}));
-                            response.end();
-                        };
-                    }
-                } else {  // get all
+            let uuid = request.url?.split('/').at(-1) ?? '';
+            if (uuid.length > 0) {  // get by id
+                try {  // found
+                    let user = await getUser(uuid, storage);
                     response.statusCode = 200;
-                    response.write(JSON.stringify(storage));
+                    response.write(JSON.stringify(user));
                     response.end();
-                };
-            } else {  // invalid url
-                response.statusCode = 400
-                response.write(`Ashibka ${request.url}`)
-                response.end()
+                } catch (err) {
+                    if (err instanceof AssertionError) { // invalid uuid
+                        response.statusCode = 400;
+                        response.write(JSON.stringify({"error": "Invalid UUID"}));
+                        response.end();
+                    } else {  // not found
+                        response.statusCode = 404;
+                        response.write(JSON.stringify({"error": "No such UUID"}));
+                        response.end();
+                    };
+                }
+            } else {  // get all
+                response.statusCode = 200;
+                response.write(JSON.stringify(storage));
+                response.end();
             };
             break;
 
