@@ -43,6 +43,14 @@ export async function updateUser(userData: User, userId: string, storage: User[]
     });
 };
 
-export function deleteUser() {
-
+export async function deleteUser(userId: string, storage: User[]): Promise<User[]> {
+    assert(validate(userId), "Not a valid UUID");
+    return new Promise((resolve, reject) => {
+        let newStorage = storage.filter(user => {
+            return user.id !== userId;
+        });
+        if (newStorage.length == storage.length)
+            reject(new Error("Not found"));
+        resolve(newStorage);
+    });
 };

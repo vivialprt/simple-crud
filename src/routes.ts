@@ -3,7 +3,8 @@ import { getReqBody } from "./middleware";
 import {
     createUser,
     getUser,
-    updateUser
+    updateUser,
+    deleteUser
 } from "./endpoints";
 import { User } from "./user";
 import { AssertionError } from "assert";
@@ -94,6 +95,28 @@ export async function routeRequest(
             break;
 
         case "DELETE":
+            if (uuid.length > 0) {  
+                try {  // found
+                    storage = await deleteUser(uuid, storage);
+                    response.statusCode = 204;
+                    response.write(JSON.stringify([]));
+                    response.end();
+                } catch (err) {
+                    if (err instanceof AssertionError) { // invalid uuid
+                        response.statusCode = 400;
+                        response.write(JSON.stringify({"error": "Invalid UUID"}));
+                        response.end();
+                    } else {  // not found
+                        response.statusCode = 404;
+                        response.write(JSON.stringify({"error": "No such UUID"}));
+                        response.end();
+                    };
+                }
+            } else {  // no UUID
+                response.statusCode = 405;
+                response.write(JSON.stringify({"error": "Specify UUID"}));
+                response.end();
+            };
             break;
 
         default:
