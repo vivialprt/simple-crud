@@ -20,7 +20,7 @@ export async function routeRequest(
     let body = await getReqBody(request);
     if (!request.url?.startsWith('/users/')) {
         response.statusCode = 404;
-        response.write("No such URL");
+        response.write(JSON.stringify({"error": "No such URL"}));
         response.end();
         return;
     }
