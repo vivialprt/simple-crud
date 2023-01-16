@@ -4,8 +4,8 @@
   "description": "Basic CRUD API on vanilla node.js",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon",
-    "start": "ts-node src/index.ts",
+    "start:dev": "nodemon",
+    "start:prod": "tsc && node ./build/index.js",
     "build": "tsc src/index.ts"
   },
   "author": "Ivan Hryhoryeu",
