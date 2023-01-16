@@ -18,7 +18,7 @@ export async function routeRequest(
 ): Promise<void> {
     response.setHeader("Content-Type", "application/json");
     let body = await getReqBody(request);
-    if (!request.url?.startsWith('/users/')) {
+    if (!request.url?.startsWith('/api/users/')) {
         response.statusCode = 404;
         response.write(JSON.stringify({"error": "No such URL"}));
         response.end();
