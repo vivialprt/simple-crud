@@ -16,6 +16,7 @@ export async function routeRequest(
     request: http.IncomingMessage,
     response: http.ServerResponse
 ): Promise<void> {
+    response.setHeader("Content-Type", "application/json");
     let body = await getReqBody(request);
     if (!request.url?.startsWith('/users/')) {
         response.statusCode = 404;
