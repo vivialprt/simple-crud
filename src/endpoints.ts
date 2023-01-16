@@ -13,12 +13,12 @@ export async function getUser(userId: string, storage: User[]): Promise<User> {
     });
 };
 
-export async function createUser(userData: User, storage: User[]): Promise<string> {
+export async function createUser(userData: User, storage: User[]): Promise<User> {
     return new Promise((resolve, reject) => {
         try {
             let user = new User(userData.username, userData.age, userData.hobbies);
             storage.push(user);
-            resolve(user.id);
+            resolve(user);
         } catch (err) {
             reject(err)
         };

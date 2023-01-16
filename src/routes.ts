@@ -52,9 +52,9 @@ export async function routeRequest(
 
         case "POST":
             try {
-                let id = await createUser(body, storage);
+                let user = await createUser(body, storage);
                 response.statusCode = 201;
-                response.write(JSON.stringify({"id": id}));
+                response.write(JSON.stringify(user));
                 response.end();
             } catch (err) {
                 if (err instanceof AssertionError) {
